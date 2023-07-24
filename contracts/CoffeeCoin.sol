@@ -17,8 +17,9 @@ contract CoffeeCoin is ERC20 {
         _;
     }
 
-    function brew(address to, uint256 fullAmountNoDecimals) public onlyBarista {
-        _mint(to, numTokens(fullAmountNoDecimals));
+    function brew(address to) public onlyBarista {
+        require(orderbook[to] > 0, "No orders were made by this user!");
+        _mint(to, numTokens(orderbook[to]));
     }
 
     function orderCoffee(uint256 fullAmountNoDecimals) external {
