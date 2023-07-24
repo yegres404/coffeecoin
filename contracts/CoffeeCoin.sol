@@ -21,13 +21,24 @@ contract CoffeeCoin is ERC20 {
 
     function brew(address to) public onlyBarista {
         require(orderbook[to] > 0, "No orders were made by this user!");
-        payable(_msgSender()).transfer(freshBrewPrice * orderbook[to]);
+
         _mint(to, numTokens(orderbook[to]));
+        orderbook[to] = 0;
+
+        payable(_msgSender()).transfer(freshBrewPrice * orderbook[to]);
     }
 
     function orderCoffee(uint256 fullAmountNoDecimals) external payable {
         require(msg.value >= freshBrewPrice * fullAmountNoDecimals, "Not enough funds provided for ordering coffee!");
         orderbook[_msgSender()] = fullAmountNoDecimals;
+    }
+
+    function revokeOrder() external {
+        require(orderbook[_msgSender()] > 0, "You have no running orders!");
+
+        orderbook[_msgSender()] = 0;
+
+        payable(_msgSender()).transfer(freshBrewPrice * orderbook[_msgSender()]);
     }
 
     function employNewBarista(address newBarista) external onlyBarista {
