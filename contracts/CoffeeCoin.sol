@@ -8,6 +8,8 @@ contract CoffeeCoin is ERC20 {
 
     mapping(address => uint256) orderbook;
 
+    uint256 freshBrewPrice = 0.002 ether;
+
     constructor() ERC20("CoffeeCoin", "COF") {
         isBarista[_msgSender()] = true;
     }
@@ -19,10 +21,12 @@ contract CoffeeCoin is ERC20 {
 
     function brew(address to) public onlyBarista {
         require(orderbook[to] > 0, "No orders were made by this user!");
+        payable(_msgSender()).transfer(freshBrewPrice * orderbook[to]);
         _mint(to, numTokens(orderbook[to]));
     }
 
-    function orderCoffee(uint256 fullAmountNoDecimals) external {
+    function orderCoffee(uint256 fullAmountNoDecimals) external payable {
+        require(msg.value >= freshBrewPrice * fullAmountNoDecimals, "Not enough funds provided for ordering coffee!");
         orderbook[_msgSender()] = fullAmountNoDecimals;
     }
 
