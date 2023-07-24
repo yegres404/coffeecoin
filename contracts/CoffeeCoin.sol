@@ -33,6 +33,10 @@ contract CoffeeCoin is ERC20 {
         orderbook[_msgSender()] = fullAmountNoDecimals;
     }
 
+    function drinkOneCoffee() external {
+        _burn(_msgSender(), 1);
+    }
+
     function revokeOrder() external {
         require(orderbook[_msgSender()] > 0, "You have no running orders!");
 
