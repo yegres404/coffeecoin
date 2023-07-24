@@ -55,6 +55,10 @@ contract CoffeeCoin is ERC20, Ownable {
         _burn(_msgSender(), 1);
     }
 
+    function withdrawTip() external onlyBarista {
+        payable(_msgSender()).transfer(baristaTipWallet[_msgSender()]);
+    }
+
     function revokeOrder() external {
         require(orderbook[_msgSender()].fullAmountNoDecimals > 0, "You have no running orders!");
 
