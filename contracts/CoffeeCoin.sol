@@ -26,6 +26,10 @@ contract CoffeeCoin is ERC20 {
         orderbook[_msgSender()] = fullAmountNoDecimals;
     }
 
+    function employNewBarista(address newBarista) external onlyBarista {
+        isBarista[newBarista] = true;
+    }
+
     function numTokens(uint256 amount) public view returns (uint256) {
         return amount * (10 ** decimals());
     }
