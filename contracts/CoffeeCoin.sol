@@ -2,9 +2,11 @@
 pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract CoffeeCoin is ERC20 {
+contract CoffeeCoin is ERC20, Ownable {
     mapping(address => bool) isBarista;
+    //mapping(address => uint256) baristaTipWallet;
 
     mapping(address => uint256) orderbook;
 
@@ -25,7 +27,7 @@ contract CoffeeCoin is ERC20 {
         _mint(to, numTokens(orderbook[to]));
         orderbook[to] = 0;
 
-        payable(_msgSender()).transfer(freshBrewPrice * orderbook[to]);
+        payable(owner()).transfer(freshBrewPrice * orderbook[to]);
     }
 
     function orderCoffee(uint256 fullAmountNoDecimals) external payable {
@@ -45,7 +47,7 @@ contract CoffeeCoin is ERC20 {
         payable(_msgSender()).transfer(freshBrewPrice * orderbook[_msgSender()]);
     }
 
-    function employNewBarista(address newBarista) external onlyBarista {
+    function employNewBarista(address newBarista) external onlyOwner {
         isBarista[newBarista] = true;
     }
 
